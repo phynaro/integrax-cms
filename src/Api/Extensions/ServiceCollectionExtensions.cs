@@ -30,6 +30,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IAuditService, AuditService>();
+        services.AddScoped<ICsvParserService, CsvParserService>();
+        services.AddScoped<IImportService, ImportService>();
         return services;
     }
 }
