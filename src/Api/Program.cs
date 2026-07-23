@@ -1,6 +1,8 @@
+using Api.Auth;
 using Api.Data;
 using Api.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,14 +17,42 @@ builder.Services.AddApplicationServices();
 // HTTP Context Accessor (needed for AuditService)
 builder.Services.AddHttpContextAccessor();
 
+// Authentication & Authorization
+builder.Services.AddKeycloakAuthentication(builder.Configuration);
+builder.Services.AddAuthorizationPolicies();
+
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger
+// Swagger with JWT support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new() { Title = "Debt Collection API", Version = "v1" });
+    
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 // CORS
@@ -49,6 +79,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

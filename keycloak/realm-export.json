@@ -1,0 +1,114 @@
+{
+  "realm": "debtcollection",
+  "enabled": true,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "bruteForceProtected": true,
+  "requiredCredentials": ["password"],
+  "defaultSignatureAlgorithm": "RS256",
+  "accessTokenLifespan": 3600,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      {
+        "name": "SystemAdmin",
+        "description": "Full system access"
+      },
+      {
+        "name": "Manager",
+        "description": "Manage teams and clients"
+      },
+      {
+        "name": "Agent",
+        "description": "Collection agent"
+      },
+      {
+        "name": "Viewer",
+        "description": "Read-only access"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "debt-collection-api",
+      "name": "Debt Collection API",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "debt-collection-web",
+      "name": "Debt Collection Web App",
+      "enabled": true,
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://localhost:3000"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@debtcollection.local",
+      "enabled": true,
+      "firstName": "System",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["SystemAdmin"]
+    },
+    {
+      "username": "manager",
+      "email": "manager@debtcollection.local",
+      "enabled": true,
+      "firstName": "Test",
+      "lastName": "Manager",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "manager123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["Manager"]
+    },
+    {
+      "username": "agent",
+      "email": "agent@debtcollection.local",
+      "enabled": true,
+      "firstName": "Test",
+      "lastName": "Agent",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "agent123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["Agent"]
+    }
+  ]
+}
