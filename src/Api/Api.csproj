@@ -22,6 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.Kernel\Shared.Kernel.csproj" />
+    <ProjectReference Include="..\Modules\Identity\Identity.Core\Identity.Core.csproj" />
+    <ProjectReference Include="..\Modules\Clients\Clients.Core\Clients.Core.csproj" />
+    <ProjectReference Include="..\Modules\Portfolios\Portfolios.Core\Portfolios.Core.csproj" />
+    <ProjectReference Include="..\Modules\Audit\Audit.Core\Audit.Core.csproj" />
   </ItemGroup>
 
 </Project>
