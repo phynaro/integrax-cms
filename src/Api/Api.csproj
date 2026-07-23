@@ -26,6 +26,10 @@
     <ProjectReference Include="..\Modules\Clients\Clients.Core\Clients.Core.csproj" />
     <ProjectReference Include="..\Modules\Portfolios\Portfolios.Core\Portfolios.Core.csproj" />
     <ProjectReference Include="..\Modules\Audit\Audit.Core\Audit.Core.csproj" />
+    <ProjectReference Include="..\Modules\Debtors\Debtors.Core\Debtors.Core.csproj" />
+    <ProjectReference Include="..\Modules\Accounts\Accounts.Core\Accounts.Core.csproj" />
+    <ProjectReference Include="..\Modules\Cases\Cases.Core\Cases.Core.csproj" />
+    <ProjectReference Include="..\Modules\Imports\Imports.Core\Imports.Core.csproj" />
   </ItemGroup>
 
 </Project>
