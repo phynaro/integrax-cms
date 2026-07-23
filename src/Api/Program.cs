@@ -6,16 +6,25 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+// HTTP Context Accessor (needed for CurrentUserService)
+builder.Services.AddHttpContextAccessor();
+
+// Register interceptors
+builder.Services.AddScoped<AuditableEntityInterceptor>();
+builder.Services.AddScoped<AuditLogInterceptor>();
+
+// Database with interceptors
+builder.Services.AddDbContext<AppDbContext>((sp, options) =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+    options.AddInterceptors(
+        sp.GetRequiredService<AuditableEntityInterceptor>()
+    );
+});
 
 // Repositories and Services
 builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
-
-// HTTP Context Accessor (needed for AuditService)
-builder.Services.AddHttpContextAccessor();
 
 // Authentication & Authorization
 builder.Services.AddKeycloakAuthentication(builder.Configuration);
