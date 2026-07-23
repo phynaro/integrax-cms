@@ -31,7 +31,7 @@ export function ProtectedRoute({ children, requiredRole, requiredPermission }: P
           </p>
           <button
             onClick={login}
-            className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
           >
             Log In
           </button>

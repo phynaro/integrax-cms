@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using System.Text.Json;
 using Api.Auth;
 using Api.DTOs;
 using Identity.Core.Interfaces;
@@ -14,6 +16,14 @@ public class AuthController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<AuthController> _logger;
+
+    private static readonly string[] AppRoles =
+    [
+        AuthConstants.Roles.SystemAdmin,
+        AuthConstants.Roles.Manager,
+        AuthConstants.Roles.Agent,
+        AuthConstants.Roles.Viewer
+    ];
 
     public AuthController(
         IUserSyncService userSyncService,
@@ -41,12 +51,50 @@ public class AuthController : ControllerBase
 
         var firstName = User.FindFirst("given_name")?.Value;
         var lastName = User.FindFirst("family_name")?.Value;
+        var preferredRole = ResolvePreferredRole(User);
 
-        var user = await _userSyncService.SyncUserAsync(keycloakId, email, firstName, lastName, ct);
+        var user = await _userSyncService.SyncUserAsync(
+            keycloakId, email, firstName, lastName, preferredRole, ct);
 
         _logger.LogInformation("User {UserId} synced from Keycloak", user.Id);
 
         return Ok(ApiResponse<AuthUserDto>.Success(MapToAuthDto(user)));
+    }
+
+    private static string? ResolvePreferredRole(ClaimsPrincipal principal)
+    {
+        var claimRoles = new List<string>();
+        claimRoles.AddRange(principal.FindAll("roles").Select(c => c.Value));
+        claimRoles.AddRange(principal.FindAll(ClaimTypes.Role).Select(c => c.Value));
+
+        var realmAccess = principal.FindFirst("realm_access")?.Value;
+        if (!string.IsNullOrWhiteSpace(realmAccess))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(realmAccess);
+                if (doc.RootElement.TryGetProperty("roles", out var rolesElement) &&
+                    rolesElement.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var roleElement in rolesElement.EnumerateArray())
+                    {
+                        if (roleElement.ValueKind == JsonValueKind.String)
+                        {
+                            var role = roleElement.GetString();
+                            if (!string.IsNullOrWhiteSpace(role))
+                                claimRoles.Add(role);
+                        }
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                // Ignore malformed realm_access claim
+            }
+        }
+
+        var roleSet = claimRoles.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        return AppRoles.FirstOrDefault(r => roleSet.Contains(r));
     }
 
     [HttpGet("me")]

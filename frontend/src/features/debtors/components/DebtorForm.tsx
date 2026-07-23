@@ -95,12 +95,12 @@ export function DebtorForm({ open, onClose, onSubmit, debtor, loading }: DebtorF
   };
 
   return (
-    <Sheet open={open} onOpenChange={handleClose}>
+    <Sheet open={open} onOpenChange={(next) => { if (!next) handleClose() }}>
       <SheetContent className="sm:max-w-lg overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{debtor ? 'Edit Debtor' : 'New Debtor'}</SheetTitle>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="externalId">External ID *</Label>

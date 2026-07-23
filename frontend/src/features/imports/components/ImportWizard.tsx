@@ -122,7 +122,7 @@ export function ImportWizard({ portfolios, onComplete }: ImportWizardProps) {
 
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-none p-8 text-center cursor-pointer transition-colors ${
                 isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary'
               }`}
             >
@@ -172,7 +172,7 @@ export function ImportWizard({ portfolios, onComplete }: ImportWizardProps) {
             </div>
 
             {invalidRows > 0 && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+              <div className="p-4 bg-red-50 border border-red-200 rounded-none flex items-start gap-2">
                 <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
                 <p className="text-red-800">
                   {invalidRows} rows have errors and will not be imported. Review the errors below.
@@ -180,7 +180,7 @@ export function ImportWizard({ portfolios, onComplete }: ImportWizardProps) {
               </div>
             )}
 
-            <div className="max-h-96 overflow-auto border rounded-lg">
+            <div className="max-h-96 overflow-auto border rounded-none">
               <table className="w-full text-sm">
                 <thead className="bg-muted sticky top-0">
                   <tr>

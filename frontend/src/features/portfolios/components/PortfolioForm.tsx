@@ -96,12 +96,12 @@ export function PortfolioForm({ open, onClose, onSubmit, portfolio, clients, loa
   };
 
   return (
-    <Sheet open={open} onOpenChange={handleClose}>
+    <Sheet open={open} onOpenChange={(next) => { if (!next) handleClose() }}>
       <SheetContent className="sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>{portfolio ? 'Edit Portfolio' : 'New Portfolio'}</SheetTitle>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="clientId">Client *</Label>
             <Select

@@ -61,12 +61,12 @@ export function AuthProvider({ children }: Props) {
     isAuthenticated: false,
     isLoading: true,
     user: null,
-    token: localStorage.getItem('auth_token'),
+    token: localStorage.getItem('access_token'),
   });
 
   const fetchCurrentUser = useCallback(async (): Promise<CurrentUser | null> => {
     try {
-      const response = await apiClient.get<{ data: CurrentUser }>('/api/v1/auth/me');
+      const response = await apiClient.get<{ data: CurrentUser }>('/auth/me');
       return response.data.data;
     } catch {
       return null;
@@ -74,12 +74,13 @@ export function AuthProvider({ children }: Props) {
   }, []);
 
   const refreshUser = useCallback(async () => {
-    if (!state.token) {
-      setState(prev => ({ ...prev, isLoading: false }));
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setState(prev => ({ ...prev, isLoading: false, isAuthenticated: false, user: null, token: null }));
       return;
     }
 
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState(prev => ({ ...prev, isLoading: true, token }));
     const user = await fetchCurrentUser();
     
     setState(prev => ({
@@ -87,12 +88,13 @@ export function AuthProvider({ children }: Props) {
       isLoading: false,
       isAuthenticated: user !== null,
       user,
+      token: user ? token : null,
     }));
-  }, [state.token, fetchCurrentUser]);
+  }, [fetchCurrentUser]);
 
   useEffect(() => {
     refreshUser();
-  }, []);
+  }, [refreshUser]);
 
   const login = async () => {
     const authUrl = await getAuthUrl();
@@ -100,7 +102,7 @@ export function AuthProvider({ children }: Props) {
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('access_token');
     setState({
       isAuthenticated: false,
       isLoading: false,
@@ -111,9 +113,8 @@ export function AuthProvider({ children }: Props) {
   };
 
   const setToken = (token: string) => {
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem('access_token', token);
     setState(prev => ({ ...prev, token }));
-    refreshUser();
   };
 
   const hasPermission = (permission: string): boolean => {

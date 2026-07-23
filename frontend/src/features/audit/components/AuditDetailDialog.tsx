@@ -64,7 +64,7 @@ export function AuditDetailDialog({ open, onOpenChange, event }: AuditDetailDial
           {event.oldValues && (
             <div>
               <label className="text-sm font-medium text-muted-foreground">Previous Values</label>
-              <pre className="mt-1 p-3 bg-muted rounded-md text-xs overflow-auto max-h-40">
+              <pre className="mt-1 p-3 bg-muted rounded-none text-xs overflow-auto max-h-40">
                 {formatJson(event.oldValues)}
               </pre>
             </div>
@@ -73,7 +73,7 @@ export function AuditDetailDialog({ open, onOpenChange, event }: AuditDetailDial
           {event.newValues && (
             <div>
               <label className="text-sm font-medium text-muted-foreground">New Values</label>
-              <pre className="mt-1 p-3 bg-muted rounded-md text-xs overflow-auto max-h-40">
+              <pre className="mt-1 p-3 bg-muted rounded-none text-xs overflow-auto max-h-40">
                 {formatJson(event.newValues)}
               </pre>
             </div>
@@ -82,7 +82,7 @@ export function AuditDetailDialog({ open, onOpenChange, event }: AuditDetailDial
           {event.metadata && (
             <div>
               <label className="text-sm font-medium text-muted-foreground">Metadata</label>
-              <pre className="mt-1 p-3 bg-muted rounded-md text-xs overflow-auto max-h-40">
+              <pre className="mt-1 p-3 bg-muted rounded-none text-xs overflow-auto max-h-40">
                 {formatJson(event.metadata)}
               </pre>
             </div>

@@ -25,6 +25,7 @@ public static class AuthExtensions
             options.Authority = keycloakSettings.Authority;
             options.RequireHttpsMetadata = keycloakSettings.RequireHttpsMetadata;
             options.Audience = keycloakSettings.ClientId;
+            options.MapInboundClaims = false;
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -32,6 +33,8 @@ public static class AuthExtensions
                 ValidateAudience = keycloakSettings.ValidateAudience,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+                NameClaimType = "preferred_username",
+                RoleClaimType = "role",
                 ClockSkew = TimeSpan.FromMinutes(1)
             };
 

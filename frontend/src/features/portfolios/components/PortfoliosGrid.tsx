@@ -5,8 +5,6 @@ import { Portfolio, PortfolioStatus } from '../types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 interface PortfoliosGridProps {
   portfolios: Portfolio[];

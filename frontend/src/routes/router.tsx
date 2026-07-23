@@ -141,7 +141,7 @@ function DashboardPage() {
 
 function DashboardCard({ title, value, description }: { title: string; value: string; description: string }) {
   return (
-    <div className="rounded-lg border bg-card p-6 shadow-sm">
+    <div className="rounded-none border bg-card p-6 shadow-sm">
       <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
       <div className="mt-2 text-3xl font-bold">{value}</div>
       <p className="mt-1 text-xs text-muted-foreground">{description}</p>
@@ -190,7 +190,7 @@ function ClientsPage() {
         <h1 className="text-2xl font-bold">Clients</h1>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-none hover:bg-primary/90"
         >
           Add Client
         </button>
@@ -255,7 +255,7 @@ function PortfoliosPage() {
         <h1 className="text-2xl font-bold">Portfolios</h1>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-none hover:bg-primary/90"
         >
           Add Portfolio
         </button>
@@ -331,7 +331,7 @@ function UsersPage() {
         <h1 className="text-2xl font-bold">Users</h1>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-none hover:bg-primary/90"
         >
           Add User
         </button>
@@ -424,7 +424,7 @@ function DebtorsPage() {
         <h1 className="text-2xl font-bold">Debtors</h1>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-none hover:bg-primary/90"
         >
           Add Debtor
         </button>
@@ -557,7 +557,7 @@ function ImportsPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-4 py-2 text-sm font-medium rounded-md ${
+            className={`px-4 py-2 text-sm font-medium rounded-none ${
               activeTab === 'history' ? 'bg-primary text-white' : 'bg-secondary'
             }`}
           >
@@ -565,7 +565,7 @@ function ImportsPage() {
           </button>
           <button
             onClick={() => setActiveTab('wizard')}
-            className={`px-4 py-2 text-sm font-medium rounded-md ${
+            className={`px-4 py-2 text-sm font-medium rounded-none ${
               activeTab === 'wizard' ? 'bg-primary text-white' : 'bg-secondary'
             }`}
           >

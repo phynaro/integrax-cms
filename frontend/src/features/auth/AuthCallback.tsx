@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from './auth-context';
+import { apiClient } from '@/lib/api-client';
 
 const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8080';
 const KEYCLOAK_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'debtcollection';
@@ -9,9 +10,13 @@ const PKCE_VERIFIER_KEY = 'pkce_code_verifier';
 export function AuthCallback() {
   const { setToken } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const exchangedRef = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
+      if (exchangedRef.current) return;
+      exchangedRef.current = true;
+
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
       const errorParam = urlParams.get('error');
@@ -59,9 +64,12 @@ export function AuthCallback() {
         }
 
         const data = await response.json();
+        localStorage.setItem('access_token', data.access_token);
         setToken(data.access_token);
-        
-        window.location.href = '/';
+
+        await apiClient.post('/auth/sync');
+
+        window.location.replace('/');
       } catch (err) {
         sessionStorage.removeItem(PKCE_VERIFIER_KEY);
         setError(err instanceof Error ? err.message : 'Authentication failed');

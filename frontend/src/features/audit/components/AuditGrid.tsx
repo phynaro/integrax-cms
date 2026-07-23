@@ -11,8 +11,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Eye } from 'lucide-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 interface AuditGridProps {
   events: AuditEvent[];

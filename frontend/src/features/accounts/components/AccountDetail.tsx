@@ -57,7 +57,7 @@ export function AccountDetail({ open, onClose, account }: AccountDetailProps) {
             )}
           </div>
 
-          <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
+          <div className="space-y-4 p-4 bg-muted/50 rounded-none">
             <h3 className="font-semibold flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Financial Details
@@ -82,7 +82,7 @@ export function AccountDetail({ open, onClose, account }: AccountDetailProps) {
             </div>
           </div>
 
-          <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
+          <div className="space-y-4 p-4 bg-muted/50 rounded-none">
             <h3 className="font-semibold flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Payment History

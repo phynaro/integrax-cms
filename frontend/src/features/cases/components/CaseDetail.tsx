@@ -71,7 +71,7 @@ export function CaseDetail({ open, onClose, caseData, onClose_, onReopen, loadin
             </div>
           </div>
 
-          <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
+          <div className="space-y-4 p-4 bg-muted/50 rounded-none">
             <h3 className="font-semibold flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Timeline

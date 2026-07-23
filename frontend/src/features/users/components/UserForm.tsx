@@ -84,12 +84,12 @@ export function UserForm({ open, onClose, onSubmit, user, roles, loading }: User
   };
 
   return (
-    <Sheet open={open} onOpenChange={handleClose}>
+    <Sheet open={open} onOpenChange={(next) => { if (!next) handleClose() }}>
       <SheetContent className="sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>{user ? 'Edit User' : 'New User'}</SheetTitle>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email *</Label>
             <Input 
