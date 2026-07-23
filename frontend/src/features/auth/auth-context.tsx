@@ -3,7 +3,7 @@ import { apiClient } from '@/lib/api-client';
 import { AuthState, CurrentUser } from './types';
 
 interface AuthContextValue extends AuthState {
-  login: () => void;
+  login: () => Promise<void>;
   logout: () => void;
   setToken: (token: string) => void;
   refreshUser: () => Promise<void>;
@@ -17,9 +17,34 @@ const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8080
 const KEYCLOAK_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'debtcollection';
 const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'debt-collection-web';
 
-const getAuthUrl = () => {
+const PKCE_VERIFIER_KEY = 'pkce_code_verifier';
+
+function generateCodeVerifier(): string {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return base64UrlEncode(array);
+}
+
+async function generateCodeChallenge(verifier: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(verifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return base64UrlEncode(new Uint8Array(digest));
+}
+
+function base64UrlEncode(array: Uint8Array): string {
+  const base64 = btoa(String.fromCharCode(...array));
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+const getAuthUrl = async (): Promise<string> => {
   const redirectUri = encodeURIComponent(window.location.origin + '/auth/callback');
-  return `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth?client_id=${KEYCLOAK_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20profile%20email`;
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  
+  sessionStorage.setItem(PKCE_VERIFIER_KEY, codeVerifier);
+  
+  return `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth?client_id=${KEYCLOAK_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20profile%20email&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 };
 
 const getLogoutUrl = () => {
@@ -69,8 +94,9 @@ export function AuthProvider({ children }: Props) {
     refreshUser();
   }, []);
 
-  const login = () => {
-    window.location.href = getAuthUrl();
+  const login = async () => {
+    const authUrl = await getAuthUrl();
+    window.location.href = authUrl;
   };
 
   const logout = () => {
