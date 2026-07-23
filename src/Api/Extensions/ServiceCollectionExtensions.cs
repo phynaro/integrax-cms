@@ -1,8 +1,12 @@
 using Api.Repositories;
 using Api.Services;
+using Accounts.Core.Interfaces;
 using Audit.Core.Interfaces;
+using Cases.Core.Interfaces;
 using Clients.Core.Interfaces;
+using Debtors.Core.Interfaces;
 using Identity.Core.Interfaces;
+using Imports.Core.Interfaces;
 using Portfolios.Core.Interfaces;
 
 namespace Api.Extensions;
@@ -16,6 +20,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         services.AddScoped<IAuditEventRepository, AuditEventRepository>();
+        services.AddScoped<IDebtorRepository, DebtorRepository>();
+        services.AddScoped<IDebtAccountRepository, DebtAccountRepository>();
+        services.AddScoped<ICaseRepository, CaseRepository>();
+        services.AddScoped<IImportBatchRepository, ImportBatchRepository>();
         return services;
     }
 
