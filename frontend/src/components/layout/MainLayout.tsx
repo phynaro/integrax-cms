@@ -1,23 +1,24 @@
+import { Outlet } from '@tanstack/react-router';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { useAuth } from '@/features/auth';
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-  user?: {
-    displayName: string;
-    email: string;
-    role: string;
-  };
-}
+export function MainLayout() {
+  const { user } = useAuth();
 
-export function MainLayout({ children, user }: MainLayoutProps) {
+  const userInfo = user ? {
+    displayName: user.fullName,
+    email: user.email,
+    role: user.role,
+  } : undefined;
+
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar userRole={user?.role} />
+      <Sidebar userRole={userInfo?.role} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header user={user} />
+        <Header user={userInfo} />
         <main className="flex-1 overflow-auto p-6">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>

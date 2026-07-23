@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useLocation } from '@tanstack/react-router';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +10,7 @@ import {
   ClipboardList,
   ChevronLeft,
   ChevronRight,
+  Settings,
 } from 'lucide-react';
 
 interface NavItem {
@@ -25,8 +27,9 @@ const mainNav: NavItem[] = [
 ];
 
 const adminNav: NavItem[] = [
-  { title: 'Users', href: '/admin/users', icon: Users, roles: ['SystemAdmin'] },
-  { title: 'Audit Log', href: '/admin/audit', icon: ClipboardList, roles: ['SystemAdmin', 'Manager'] },
+  { title: 'Users', href: '/users', icon: Users, roles: ['SystemAdmin'] },
+  { title: 'Audit Log', href: '/audit', icon: ClipboardList, roles: ['SystemAdmin', 'Manager'] },
+  { title: 'Settings', href: '/settings', icon: Settings, roles: ['SystemAdmin'] },
 ];
 
 interface SidebarProps {
@@ -35,7 +38,8 @@ interface SidebarProps {
 
 export function Sidebar({ userRole = 'SystemAdmin' }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const currentPath = window.location.pathname;
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const canAccess = (item: NavItem) => {
     if (!item.roles) return true;
@@ -47,8 +51,8 @@ export function Sidebar({ userRole = 'SystemAdmin' }: SidebarProps) {
     const Icon = item.icon;
 
     return (
-      <a
-        href={item.href}
+      <Link
+        to={item.href}
         className={cn(
           'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
           isActive
@@ -60,7 +64,7 @@ export function Sidebar({ userRole = 'SystemAdmin' }: SidebarProps) {
       >
         <Icon className="h-4 w-4 shrink-0" />
         {!collapsed && <span>{item.title}</span>}
-      </a>
+      </Link>
     );
   };
 
