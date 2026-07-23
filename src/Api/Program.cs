@@ -1,6 +1,7 @@
 using Api.Auth;
 using Api.Data;
 using Api.Extensions;
+using Api.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -76,6 +77,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Global exception handling
+app.UseGlobalExceptionHandler();
 
 // Configure pipeline
 if (app.Environment.IsDevelopment())
