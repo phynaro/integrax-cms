@@ -4,6 +4,7 @@ import { useAuth } from './auth-context';
 const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8080';
 const KEYCLOAK_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'debtcollection';
 const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'debt-collection-web';
+const PKCE_VERIFIER_KEY = 'pkce_code_verifier';
 
 export function AuthCallback() {
   const { setToken } = useAuth();
@@ -26,6 +27,12 @@ export function AuthCallback() {
         return;
       }
 
+      const codeVerifier = sessionStorage.getItem(PKCE_VERIFIER_KEY);
+      if (!codeVerifier) {
+        setError('Missing PKCE code verifier. Please try logging in again.');
+        return;
+      }
+
       try {
         const tokenUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`;
         const redirectUri = window.location.origin + '/auth/callback';
@@ -40,11 +47,15 @@ export function AuthCallback() {
             client_id: KEYCLOAK_CLIENT_ID,
             code,
             redirect_uri: redirectUri,
+            code_verifier: codeVerifier,
           }),
         });
 
+        sessionStorage.removeItem(PKCE_VERIFIER_KEY);
+
         if (!response.ok) {
-          throw new Error('Failed to exchange code for token');
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error_description || 'Failed to exchange code for token');
         }
 
         const data = await response.json();
@@ -52,6 +63,7 @@ export function AuthCallback() {
         
         window.location.href = '/';
       } catch (err) {
+        sessionStorage.removeItem(PKCE_VERIFIER_KEY);
         setError(err instanceof Error ? err.message : 'Authentication failed');
       }
     };
