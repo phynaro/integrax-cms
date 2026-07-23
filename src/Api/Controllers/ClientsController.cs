@@ -4,6 +4,7 @@ using Audit.Core.Interfaces;
 using Clients.Core.Entities;
 using Clients.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Portfolios.Core.Interfaces;
 
 namespace Api.Controllers;
 
@@ -12,11 +13,16 @@ namespace Api.Controllers;
 public class ClientsController : ControllerBase
 {
     private readonly IClientRepository _clientRepository;
+    private readonly IPortfolioRepository _portfolioRepository;
     private readonly IAuditService _auditService;
 
-    public ClientsController(IClientRepository clientRepository, IAuditService auditService)
+    public ClientsController(
+        IClientRepository clientRepository,
+        IPortfolioRepository portfolioRepository,
+        IAuditService auditService)
     {
         _clientRepository = clientRepository;
+        _portfolioRepository = portfolioRepository;
         _auditService = auditService;
     }
 
@@ -114,6 +120,22 @@ public class ClientsController : ControllerBase
         await _auditService.LogAsync(AuditEventType.Delete, "Client", client.Id, ct: ct);
 
         return NoContent();
+    }
+
+    [HttpGet("{id:guid}/portfolios")]
+    public async Task<ActionResult<ApiResponse<List<PortfolioListDto>>>> GetPortfolios(Guid id, CancellationToken ct)
+    {
+        var client = await _clientRepository.GetByIdAsync(id, ct);
+        if (client == null)
+            return NotFound(ApiErrorResponse.Create("NOT_FOUND", "Client not found"));
+
+        var portfolios = await _portfolioRepository.GetByClientIdAsync(id, ct);
+        var dtos = portfolios.Select(p => new PortfolioListDto(
+            p.Id, p.ExternalId, p.ClientId, p.Client?.Name ?? "", p.Client?.Code ?? "",
+            p.Name, p.Code, p.Status, p.TotalAccounts, p.TotalAmount, p.ReceivedDate, p.IsActive, p.CreatedAt
+        )).ToList();
+
+        return Ok(ApiResponse<List<PortfolioListDto>>.Success(dtos));
     }
 
     private static ClientDto MapToDto(Client client) => new(
