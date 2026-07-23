@@ -16,8 +16,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - dc-network
 
   redis:
     image: redis:7-alpine
@@ -31,8 +29,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - dc-network
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
@@ -54,52 +50,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - dc-network
-
-  api:
-    build:
-      context: .
-      dockerfile: src/Api/Dockerfile
-    container_name: dc-api
-    ports:
-      - "5000:5000"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=debtcollection;Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}"
-      Keycloak__Authority: "http://keycloak:8080/realms/debtcollection"
-      Keycloak__ClientId: "debt-collection-api"
-      Keycloak__RequireHttpsMetadata: "false"
-      Keycloak__ValidateAudience: "false"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      keycloak:
-        condition: service_started
-    networks:
-      - dc-network
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: dc-frontend
-    ports:
-      - "3000:80"
-    environment:
-      VITE_API_URL: "http://localhost:5000"
-      VITE_KEYCLOAK_URL: "http://localhost:8080"
-      VITE_KEYCLOAK_REALM: "debtcollection"
-      VITE_KEYCLOAK_CLIENT_ID: "debt-collection-web"
-    depends_on:
-      - api
-    networks:
-      - dc-network
 
 volumes:
   postgres_data:
   redis_data:
-
-networks:
-  dc-network:
-    driver: bridge
