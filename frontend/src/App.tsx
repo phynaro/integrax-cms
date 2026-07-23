@@ -1,12 +1,20 @@
+import { MainLayout } from '@/components/layout';
+
+const mockUser = {
+  displayName: 'Admin User',
+  email: 'admin@example.com',
+  role: 'SystemAdmin',
+};
+
 function App() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="p-8">
-        <h1 className="text-2xl font-bold">Debt Collection System</h1>
-        <p className="text-muted-foreground">Welcome to the debt collection management system.</p>
+    <MainLayout user={mockUser}>
+      <div>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome to Debt Collection System</p>
       </div>
-    </div>
-  )
+    </MainLayout>
+  );
 }
 
-export default App
+export default App;
