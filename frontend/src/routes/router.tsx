@@ -6,6 +6,10 @@ import { ClientsGrid, ClientForm, useClients, useCreateClient, useUpdateClient, 
 import { PortfoliosGrid, PortfolioForm, usePortfolios, useCreatePortfolio, useUpdatePortfolio, useDeletePortfolio, Portfolio } from '@/features/portfolios';
 import { UsersGrid, UserForm, useUsers, useRoles, useCreateUser, useUpdateUser, useDeleteUser, useActivateUser, useDeactivateUser, User } from '@/features/users';
 import { AuditGrid, useAuditEvents } from '@/features/audit';
+import { DebtorsGrid, DebtorForm, DebtorDetail, useDebtors, useDebtor, useCreateDebtor, useUpdateDebtor, useDeleteDebtor, DebtorListItem } from '@/features/debtors';
+import { AccountsGrid, AccountDetail, useAccounts, useAccount, DebtAccountListItem, DebtAccount } from '@/features/accounts';
+import { CasesGrid, CaseDetail, useCases, useCase, useCloseCase, useReopenCase, CaseListItem, CollectionCase } from '@/features/cases';
+import { ImportWizard, ImportHistory, useImports, useRollbackImport, ImportBatchListItem } from '@/features/imports';
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -57,6 +61,30 @@ const settingsRoute = createRoute({
   component: SettingsPage,
 });
 
+const debtorsRoute = createRoute({
+  getParentRoute: () => authenticatedLayout,
+  path: '/debtors',
+  component: DebtorsPage,
+});
+
+const accountsRoute = createRoute({
+  getParentRoute: () => authenticatedLayout,
+  path: '/accounts',
+  component: AccountsPage,
+});
+
+const casesRoute = createRoute({
+  getParentRoute: () => authenticatedLayout,
+  path: '/cases',
+  component: CasesPage,
+});
+
+const importsRoute = createRoute({
+  getParentRoute: () => authenticatedLayout,
+  path: '/imports',
+  component: ImportsPage,
+});
+
 const authCallbackRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/auth/callback',
@@ -74,6 +102,10 @@ const routeTree = rootRoute.addChildren([
     indexRoute,
     clientsRoute,
     portfoliosRoute,
+    debtorsRoute,
+    accountsRoute,
+    casesRoute,
+    importsRoute,
     usersRoute,
     auditRoute,
     settingsRoute,
@@ -340,6 +372,221 @@ function SettingsPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Settings</h1>
       <p className="text-muted-foreground">System settings will be available here.</p>
+    </div>
+  );
+}
+
+function DebtorsPage() {
+  const [selectedDebtorItem, setSelectedDebtorItem] = useState<DebtorListItem | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  
+  const { data: response, isLoading } = useDebtors();
+  const debtors = response?.data ?? [];
+  const { data: fullDebtor } = useDebtor(selectedDebtorItem?.id || '');
+  const createMutation = useCreateDebtor();
+  const updateMutation = useUpdateDebtor();
+  const deleteMutation = useDeleteDebtor();
+
+  const handleCreate = () => {
+    setSelectedDebtorItem(null);
+    setIsFormOpen(true);
+  };
+
+  const handleView = (debtor: DebtorListItem) => {
+    setSelectedDebtorItem(debtor);
+    setIsDetailOpen(true);
+  };
+
+  const handleEdit = (debtor: DebtorListItem) => {
+    setSelectedDebtorItem(debtor);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (debtor: DebtorListItem) => {
+    if (confirm('Are you sure you want to deactivate this debtor?')) {
+      deleteMutation.mutate(debtor.id);
+    }
+  };
+
+  const handleSubmit = (data: any) => {
+    if (selectedDebtorItem) {
+      updateMutation.mutate({ id: selectedDebtorItem.id, ...data });
+    } else {
+      createMutation.mutate(data);
+    }
+    setIsFormOpen(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Debtors</h1>
+        <button
+          onClick={handleCreate}
+          className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+        >
+          Add Debtor
+        </button>
+      </div>
+      <DebtorsGrid
+        debtors={debtors}
+        loading={isLoading}
+        onView={handleView}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+      <DebtorForm
+        open={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        debtor={fullDebtor || undefined}
+        onSubmit={handleSubmit}
+        loading={createMutation.isPending || updateMutation.isPending}
+      />
+      <DebtorDetail
+        open={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        debtor={fullDebtor || null}
+      />
+    </div>
+  );
+}
+
+function AccountsPage() {
+  const [selectedAccount, setSelectedAccount] = useState<DebtAccount | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  
+  const { data: response, isLoading } = useAccounts();
+  const accounts = response?.data ?? [];
+  const { data: fullAccount } = useAccount(selectedAccount?.id || '');
+
+  const handleView = (account: DebtAccountListItem) => {
+    setSelectedAccount(account as any);
+    setIsDetailOpen(true);
+  };
+
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold">Debt Accounts</h1>
+      <AccountsGrid
+        accounts={accounts}
+        loading={isLoading}
+        onView={handleView}
+        onEdit={handleView}
+        onDelete={() => {}}
+      />
+      <AccountDetail
+        open={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        account={fullAccount || null}
+      />
+    </div>
+  );
+}
+
+function CasesPage() {
+  const [selectedCase, setSelectedCase] = useState<CollectionCase | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  
+  const { data: response, isLoading } = useCases();
+  const cases = response?.data ?? [];
+  const { data: fullCase } = useCase(selectedCase?.id || '');
+  const closeMutation = useCloseCase();
+  const reopenMutation = useReopenCase();
+
+  const handleView = (caseItem: CaseListItem) => {
+    setSelectedCase(caseItem as any);
+    setIsDetailOpen(true);
+  };
+
+  const handleClose = () => {
+    if (selectedCase) {
+      closeMutation.mutate(selectedCase.id);
+    }
+  };
+
+  const handleReopen = () => {
+    if (selectedCase) {
+      reopenMutation.mutate(selectedCase.id);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold">Collection Cases</h1>
+      <CasesGrid
+        cases={cases}
+        loading={isLoading}
+        onView={handleView}
+      />
+      <CaseDetail
+        open={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        caseData={fullCase || null}
+        onClose_={handleClose}
+        onReopen={handleReopen}
+        loading={closeMutation.isPending || reopenMutation.isPending}
+      />
+    </div>
+  );
+}
+
+function ImportsPage() {
+  const [activeTab, setActiveTab] = useState<'wizard' | 'history'>('history');
+  
+  const { data: response, isLoading } = useImports();
+  const imports = response?.data ?? [];
+  const { data: portfolioResponse } = usePortfolios();
+  const portfolios = portfolioResponse?.data ?? [];
+  const rollbackMutation = useRollbackImport();
+
+  const handleView = (importItem: ImportBatchListItem) => {
+    console.log('View import:', importItem);
+  };
+
+  const handleRollback = (importItem: ImportBatchListItem) => {
+    if (confirm('Are you sure you want to rollback this import? This will delete all imported data.')) {
+      rollbackMutation.mutate(importItem.id);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Import Management</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${
+              activeTab === 'history' ? 'bg-primary text-white' : 'bg-secondary'
+            }`}
+          >
+            History
+          </button>
+          <button
+            onClick={() => setActiveTab('wizard')}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${
+              activeTab === 'wizard' ? 'bg-primary text-white' : 'bg-secondary'
+            }`}
+          >
+            New Import
+          </button>
+        </div>
+      </div>
+      
+      {activeTab === 'history' ? (
+        <ImportHistory
+          imports={imports}
+          loading={isLoading}
+          onView={handleView}
+          onRollback={handleRollback}
+        />
+      ) : (
+        <ImportWizard
+          portfolios={portfolios.map(p => ({ id: p.id, name: p.name }))}
+          onComplete={() => setActiveTab('history')}
+        />
+      )}
     </div>
   );
 }

@@ -11,6 +11,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Settings,
+  UserCircle,
+  FileText,
+  Briefcase,
+  Upload,
 } from 'lucide-react';
 
 interface NavItem {
@@ -24,6 +28,13 @@ const mainNav: NavItem[] = [
   { title: 'Dashboard', href: '/', icon: LayoutDashboard },
   { title: 'Clients', href: '/clients', icon: Building2 },
   { title: 'Portfolios', href: '/portfolios', icon: FolderOpen },
+];
+
+const collectionNav: NavItem[] = [
+  { title: 'Debtors', href: '/debtors', icon: UserCircle },
+  { title: 'Accounts', href: '/accounts', icon: FileText },
+  { title: 'Cases', href: '/cases', icon: Briefcase },
+  { title: 'Import', href: '/imports', icon: Upload },
 ];
 
 const adminNav: NavItem[] = [
@@ -81,6 +92,16 @@ export function Sidebar({ userRole = 'SystemAdmin' }: SidebarProps) {
 
       <nav className="flex-1 space-y-1 p-2">
         {mainNav.map((item) => (
+          <NavLink key={item.href} item={item} />
+        ))}
+
+        <div className="my-2 px-3">
+          {!collapsed && (
+            <span className="text-xs font-medium text-muted-foreground">COLLECTION</span>
+          )}
+          {collapsed && <div className="border-t" />}
+        </div>
+        {collectionNav.map((item) => (
           <NavLink key={item.href} item={item} />
         ))}
 
