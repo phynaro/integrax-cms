@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Kernel", "Shared\Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{591EFB5D-A453-4765-9C7D-018CEF645E50}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{F993F7ED-9182-4370-8909-856A03FAD834}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{CE76A24F-D0F8-45FD-B10B-13C82099C5AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Core", "Modules\Identity\Identity.Core\Identity.Core.csproj", "{B84F1383-211A-4863-B6EC-C975A0A922FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,8 +32,14 @@ Global
 		{591EFB5D-A453-4765-9C7D-018CEF645E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{591EFB5D-A453-4765-9C7D-018CEF645E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{591EFB5D-A453-4765-9C7D-018CEF645E50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B84F1383-211A-4863-B6EC-C975A0A922FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B84F1383-211A-4863-B6EC-C975A0A922FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B84F1383-211A-4863-B6EC-C975A0A922FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B84F1383-211A-4863-B6EC-C975A0A922FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{768AF9B1-64F0-42D2-BF4F-75DD2031ADC4} = {8520B6A0-5217-4AAF-A386-20CEFBE9B57D}
+		{CE76A24F-D0F8-45FD-B10B-13C82099C5AB} = {F993F7ED-9182-4370-8909-856A03FAD834}
+		{B84F1383-211A-4863-B6EC-C975A0A922FC} = {CE76A24F-D0F8-45FD-B10B-13C82099C5AB}
 	EndGlobalSection
 EndGlobal
