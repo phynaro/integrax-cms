@@ -1,0 +1,42 @@
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Node
+node_modules/
+dist/
+.npm
+.eslintcache
+
+# Logs
+*.log
+logs/
+
+# Build
+build/
+out/
+
+# Test
+coverage/
+*.coverage
+
+# Docker
+postgres_data/
+redis_data/
